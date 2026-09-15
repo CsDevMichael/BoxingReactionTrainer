@@ -1,0 +1,267 @@
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  min-height: 100vh;
+  text-align: center;
+  padding: 60px 20px;
+  background:
+    radial-gradient(circle at top, #252525 0%, #111 35%, #050505 75%);
+  color: white;
+}
+
+.app h1 {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+
+.app > p {
+  font-size: 18px;
+  color: #999;
+  margin-bottom: 50px;
+}
+
+.app h2 {
+  margin-top: 35px;
+  margin-bottom: 18px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.app button {
+  padding: 14px 26px;
+  margin: 6px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #ddd;
+  background: #171717;
+  border: 1px solid #333;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.app button:hover {
+  transform: translateY(-2px);
+  background: #222;
+  border-color: #555;
+}
+
+.app button:active {
+  transform: scale(0.94);
+}
+
+.selected {
+  background: linear-gradient(135deg, #e63946, #a4161a) !important;
+  color: white !important;
+  border: 1px solid #ff5a65 !important;
+  transform: scale(1.05);
+  box-shadow:
+    0 0 20px rgba(230, 57, 70, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: 0.5s;
+}
+
+.start-container {
+  margin-top: 70px;
+}
+
+.start-button {
+  min-width: 220px;
+  padding: 17px 35px !important;
+  background: linear-gradient(135deg, #e63946, #b5171e) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 14px !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 8px 25px rgba(230, 57, 70, 0.25);
+}
+
+.start-button:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  box-shadow:
+    0 12px 35px rgba(230, 57, 70, 0.35);
+}
+
+.start-button:active {
+  transform: scale(0.94) !important;
+  transition: 0.1s;
+}
+
+.start-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.start-button:disabled:hover {
+  transform: none !important;
+}
+
+/* ============================= */
+/*        TRAINING SCREEN        */
+/* ============================= */
+
+.training-screen {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at center,
+      #181818 0%,
+      #080808 50%,
+      #000 100%
+    );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.training-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.035),
+      transparent 45%
+    );
+  pointer-events: none;
+}
+
+.round-info {
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 2;
+}
+
+.round-number {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 5px;
+}
+
+.timer {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #777;
+  letter-spacing: 2px;
+}
+
+/* ============================= */
+/*      COMBINATION DISPLAY     */
+/* ============================= */
+
+.training-command {
+  position: relative;
+  z-index: 2;
+
+  max-width: 90%;
+  padding: 30px;
+
+  font-size: clamp(36px, 6vw, 68px);
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  animation: premiumCommand 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+
+  text-shadow:
+    0 0 15px rgba(255, 255, 255, 0.12),
+    0 0 45px rgba(230, 57, 70, 0.08);
+}
+
+@keyframes premiumCommand {
+
+  0% {
+    opacity: 0;
+    transform:
+      scale(0.65)
+      translateY(25px);
+    filter: blur(14px);
+  }
+
+  45% {
+    opacity: 0.8;
+    transform:
+      scale(1.08)
+      translateY(-4px);
+    filter: blur(2px);
+  }
+
+  70% {
+    opacity: 1;
+    transform:
+      scale(0.98)
+      translateY(0);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform:
+      scale(1)
+      translateY(0);
+    filter: blur(0);
+  }
+
+}
+
+/* ============================= */
+/*           MOBILE             */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+  .app {
+    padding: 40px 15px;
+  }
+
+  .app h1 {
+    font-size: 38px;
+  }
+
+  .app > p {
+    font-size: 16px;
+    margin-bottom: 35px;
+  }
+
+  .app button {
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+
+  .start-container {
+    margin-top: 60px;
+  }
+
+  .training-command {
+    font-size: 34px;
+    padding: 20px;
+  }
+
+  .round-number {
+    font-size: 18px;
+  }
+
+}
