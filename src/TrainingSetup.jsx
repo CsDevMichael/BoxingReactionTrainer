@@ -19,20 +19,60 @@ function TrainingSetup({ title, onStartTraining }) {
     "Southpaw"
   ];
 
+  const roundOptions = [3, 5, 8, 10];
+
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
   const [selectedStance, setSelectedStance] = useState(null);
 
+  const [selectedRounds, setSelectedRounds] = useState(null);
+
+  const [customSelected, setCustomSelected] = useState(false);
+  const [customRounds, setCustomRounds] = useState("");
+
+  function selectRound(rounds) {
+    setSelectedRounds(rounds);
+    setCustomSelected(false);
+    setCustomRounds("");
+  }
+
+  function selectCustom() {
+    setCustomSelected(true);
+    setSelectedRounds(null);
+    setCustomRounds("");
+  }
+
+  function handleCustomRoundsChange(event) {
+
+    const value = event.target.value;
+
+    setCustomRounds(value);
+
+    const rounds = Number(value);
+
+    if (value === "") {
+      setSelectedRounds(null);
+    } else if (rounds >= 1 && rounds <= 20) {
+      setSelectedRounds(rounds);
+    }
+  }
+
   function handleStartTraining() {
 
-    const settings = {
+    onStartTraining({
       difficulty: selectedDifficulty,
       mode: selectedMode,
-      stance: selectedStance
-    };
-
-    onStartTraining(settings);
+      stance: selectedStance,
+      rounds: selectedRounds
+    });
   }
+
+  const canStart =
+    selectedDifficulty &&
+    selectedMode &&
+    selectedStance &&
+    selectedRounds >= 1 &&
+    selectedRounds <= 20;
 
   return (
     <div>
@@ -44,11 +84,7 @@ function TrainingSetup({ title, onStartTraining }) {
       {difficulties.map((difficulty) => (
         <button
           key={difficulty}
-          className={
-            selectedDifficulty === difficulty
-              ? "selected"
-              : ""
-          }
+          className={selectedDifficulty === difficulty ? "selected" : ""}
           onClick={() => setSelectedDifficulty(difficulty)}
         >
           {difficulty}
@@ -60,11 +96,7 @@ function TrainingSetup({ title, onStartTraining }) {
       {modes.map((mode) => (
         <button
           key={mode}
-          className={
-            selectedMode === mode
-              ? "selected"
-              : ""
-          }
+          className={selectedMode === mode ? "selected" : ""}
           onClick={() => setSelectedMode(mode)}
         >
           {mode}
@@ -76,29 +108,62 @@ function TrainingSetup({ title, onStartTraining }) {
       {stances.map((stance) => (
         <button
           key={stance}
-          className={
-            selectedStance === stance
-              ? "selected"
-              : ""
-          }
+          className={selectedStance === stance ? "selected" : ""}
           onClick={() => setSelectedStance(stance)}
         >
           {stance}
         </button>
       ))}
 
+      <h2>Rounds</h2>
+
+      {roundOptions.map((rounds) => (
+        <button
+          key={rounds}
+          className={
+            !customSelected && selectedRounds === rounds
+              ? "selected"
+              : ""
+          }
+          onClick={() => selectRound(rounds)}
+        >
+          {rounds}
+        </button>
+      ))}
+
+      <button
+        className={customSelected ? "selected" : ""}
+        onClick={selectCustom}
+      >
+        Custom
+      </button>
+
+      {/* Custom input stays visible whenever Custom is selected */}
+      {customSelected && (
+        <div className="custom-rounds">
+
+          <input
+            type="number"
+            min="1"
+            max="20"
+            placeholder="Enter rounds"
+            value={customRounds}
+            onChange={handleCustomRoundsChange}
+          />
+
+        </div>
+      )}
+
       <div className="start-container">
+
         <button
           className="start-button"
           onClick={handleStartTraining}
-          disabled={
-            !selectedDifficulty ||
-            !selectedMode ||
-            !selectedStance
-          }
+          disabled={!canStart}
         >
           Start Training
         </button>
+
       </div>
 
     </div>
