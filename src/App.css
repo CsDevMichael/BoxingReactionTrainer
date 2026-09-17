@@ -296,3 +296,55 @@
   }
 
 }
+.rest-screen {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  animation: restScreenAnimation 0.8s ease;
+}
+
+.rest-title {
+  font-size: clamp(52px, 9vw, 100px);
+  font-weight: 900;
+  letter-spacing: 8px;
+}
+
+.rest-timer {
+  margin-top: 15px;
+
+  font-size: 42px;
+  font-weight: 700;
+
+  color: #888;
+}
+
+.rest-message {
+  margin-top: 20px;
+
+  font-size: 16px;
+  letter-spacing: 2px;
+
+  color: #666;
+  text-transform: uppercase;
+}
+
+@keyframes restScreenAnimation {
+
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+}

@@ -137,6 +137,8 @@ const combinationIntervals = {
   Advanced: 3000
 };
 
+const restDuration = 30;
+
 function TrainingScreen({ difficulty, mode, stance }) {
 
   const [round, setRound] = useState(1);
@@ -157,8 +159,7 @@ function TrainingScreen({ difficulty, mode, stance }) {
   const [combinationId, setCombinationId] = useState(0);
 
   /*
-    ROUND INTRO TIMER
-    Shows "ROUND 1" for 3 seconds.
+    ROUND INTRO
   */
 
   useEffect(() => {
@@ -181,9 +182,9 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
   }, [phase, difficulty]);
 
+
   /*
     COMBINATION TIMER
-    Only runs while training.
   */
 
   useEffect(() => {
@@ -211,9 +212,9 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
   }, [phase, difficulty, mode]);
 
+
   /*
-    ROUND TIMER
-    Only runs while training.
+    TRAINING ROUND TIMER
   */
 
   useEffect(() => {
@@ -228,13 +229,9 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
         if (previousTime <= 1) {
 
-          setRound(
-            (previousRound) => previousRound + 1
-          );
+          setPhase("rest");
 
-          setPhase("roundIntro");
-
-          return 3;
+          return restDuration;
         }
 
         return previousTime - 1;
@@ -247,6 +244,47 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
   }, [phase, difficulty]);
 
+
+  /*
+    REST TIMER
+  */
+
+  useEffect(() => {
+
+    if (phase !== "rest") {
+      return;
+    }
+
+    if (timeLeft <= 1) {
+
+      setRound(
+        (previousRound) => previousRound + 1
+      );
+
+      setPhase("roundIntro");
+
+      setTimeLeft(3);
+
+      return;
+    }
+
+    const restTimer = setTimeout(() => {
+
+      setTimeLeft(
+        (previousTime) => previousTime - 1
+      );
+
+    }, 1000);
+
+    return () => clearTimeout(restTimer);
+
+  }, [phase, timeLeft]);
+
+
+  /*
+    SCREEN
+  */
+
   return (
     <div className="training-screen">
 
@@ -257,6 +295,7 @@ function TrainingScreen({ difficulty, mode, stance }) {
         </div>
 
       )}
+
 
       {phase === "training" && (
 
@@ -279,7 +318,29 @@ function TrainingScreen({ difficulty, mode, stance }) {
           >
             {combination}
           </div>
+
         </>
+
+      )}
+
+
+      {phase === "rest" && (
+
+        <div className="rest-screen">
+
+          <div className="rest-title">
+            REST
+          </div>
+
+          <div className="rest-timer">
+            {timeLeft}s
+          </div>
+
+          <div className="rest-message">
+            Breathe. Recover. Get ready.
+          </div>
+
+        </div>
 
       )}
 
