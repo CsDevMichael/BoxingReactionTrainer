@@ -265,3 +265,34 @@
   }
 
 }
+.round-intro {
+  position: relative;
+  z-index: 2;
+
+  font-size: clamp(48px, 8vw, 90px);
+  font-weight: 900;
+  letter-spacing: 6px;
+
+  animation: roundIntroAnimation 0.8s ease;
+}
+
+@keyframes roundIntroAnimation {
+
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(10px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+}

@@ -141,9 +141,9 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
   const [round, setRound] = useState(1);
 
-  const [timeLeft, setTimeLeft] = useState(
-    roundDurations[difficulty]
-  );
+  const [phase, setPhase] = useState("roundIntro");
+
+  const [timeLeft, setTimeLeft] = useState(3);
 
   const combinations =
     trainingCombinations[difficulty][mode];
@@ -156,7 +156,41 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
   const [combinationId, setCombinationId] = useState(0);
 
+  /*
+    ROUND INTRO TIMER
+    Shows "ROUND 1" for 3 seconds.
+  */
+
   useEffect(() => {
+
+    if (phase !== "roundIntro") {
+      return;
+    }
+
+    const introTimer = setTimeout(() => {
+
+      setPhase("training");
+
+      setTimeLeft(
+        roundDurations[difficulty]
+      );
+
+    }, 3000);
+
+    return () => clearTimeout(introTimer);
+
+  }, [phase, difficulty]);
+
+  /*
+    COMBINATION TIMER
+    Only runs while training.
+  */
+
+  useEffect(() => {
+
+    if (phase !== "training") {
+      return;
+    }
 
     const combinationTimer = setInterval(() => {
 
@@ -175,9 +209,18 @@ function TrainingScreen({ difficulty, mode, stance }) {
 
     return () => clearInterval(combinationTimer);
 
-  }, [difficulty, mode]);
+  }, [phase, difficulty, mode]);
+
+  /*
+    ROUND TIMER
+    Only runs while training.
+  */
 
   useEffect(() => {
+
+    if (phase !== "training") {
+      return;
+    }
 
     const timer = setInterval(() => {
 
@@ -189,39 +232,56 @@ function TrainingScreen({ difficulty, mode, stance }) {
             (previousRound) => previousRound + 1
           );
 
-          return roundDurations[difficulty];
+          setPhase("roundIntro");
+
+          return 3;
         }
 
         return previousTime - 1;
+
       });
 
     }, 1000);
 
     return () => clearInterval(timer);
 
-  }, [difficulty]);
+  }, [phase, difficulty]);
 
   return (
     <div className="training-screen">
 
-      <div className="round-info">
+      {phase === "roundIntro" && (
 
-        <div className="round-number">
+        <div className="round-intro">
           ROUND {round}
         </div>
 
-        <div className="timer">
-          {timeLeft}s
-        </div>
+      )}
 
-      </div>
+      {phase === "training" && (
 
-      <div
-        key={combinationId}
-        className="training-command"
-      >
-        {combination}
-      </div>
+        <>
+          <div className="round-info">
+
+            <div className="round-number">
+              ROUND {round}
+            </div>
+
+            <div className="timer">
+              {timeLeft}s
+            </div>
+
+          </div>
+
+          <div
+            key={combinationId}
+            className="training-command"
+          >
+            {combination}
+          </div>
+        </>
+
+      )}
 
     </div>
   );
