@@ -149,6 +149,11 @@ const combinationIntervals = {
 const restDuration = 30;
 
 
+/* COUNTDOWN */
+
+const countdownDuration = 3;
+
+
 /* ROUND INTRO */
 
 const roundIntroDuration = 3;
@@ -168,10 +173,10 @@ function TrainingScreen({
 
   const [round, setRound] = useState(1);
 
-  const [phase, setPhase] = useState("roundIntro");
+  const [phase, setPhase] = useState("countdown");
 
   const [timeLeft, setTimeLeft] =
-    useState(roundIntroDuration);
+    useState(countdownDuration);
 
 
   const [combination, setCombination] = useState(
@@ -186,6 +191,42 @@ function TrainingScreen({
 
 
   /*
+    COUNTDOWN
+  */
+
+  useEffect(() => {
+
+    if (phase !== "countdown") {
+      return;
+    }
+
+
+    if (timeLeft <= 0) {
+
+      setPhase("roundIntro");
+
+      setTimeLeft(roundIntroDuration);
+
+      return;
+
+    }
+
+
+    const timer = setTimeout(() => {
+
+      setTimeLeft(
+        (previousTime) => previousTime - 1
+      );
+
+    }, 1000);
+
+
+    return () => clearTimeout(timer);
+
+  }, [phase, timeLeft]);
+
+
+  /*
     ROUND INTRO TIMER
   */
 
@@ -194,6 +235,7 @@ function TrainingScreen({
     if (phase !== "roundIntro") {
       return;
     }
+
 
     const timer = setTimeout(() => {
 
@@ -204,6 +246,7 @@ function TrainingScreen({
       );
 
     }, roundIntroDuration * 1000);
+
 
     return () => clearTimeout(timer);
 
@@ -220,6 +263,7 @@ function TrainingScreen({
       return;
     }
 
+
     const timer = setInterval(() => {
 
       setTimeLeft((previousTime) => {
@@ -227,6 +271,7 @@ function TrainingScreen({
         if (previousTime <= 1) {
 
           clearInterval(timer);
+
 
           /*
             FINAL ROUND
@@ -251,6 +296,7 @@ function TrainingScreen({
 
         }
 
+
         return previousTime - 1;
 
       });
@@ -273,6 +319,7 @@ function TrainingScreen({
       return;
     }
 
+
     const timer = setInterval(() => {
 
       const newCombination =
@@ -280,7 +327,9 @@ function TrainingScreen({
           Math.floor(Math.random() * combinations.length)
         ];
 
+
       setCombination(newCombination);
+
 
       setCombinationId(
         (previousId) => previousId + 1
@@ -418,6 +467,27 @@ function TrainingScreen({
     <div className="training-screen">
 
 
+      {phase === "countdown" && (
+
+        <div className="countdown-screen">
+
+          <div className="countdown-label">
+            GET READY
+          </div>
+
+
+          <div
+            key={timeLeft}
+            className="countdown-number"
+          >
+            {timeLeft}
+          </div>
+
+        </div>
+
+      )}
+
+
       {phase === "roundIntro" && (
 
         <div className="round-intro">
@@ -436,6 +506,7 @@ function TrainingScreen({
             <div className="round-number">
               ROUND {round}
             </div>
+
 
             <div className="timer">
               {timeLeft}s
