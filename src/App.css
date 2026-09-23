@@ -111,6 +111,7 @@
   transform: none !important;
 }
 
+
 /* ============================= */
 /*        TRAINING SCREEN        */
 /* ============================= */
@@ -167,8 +168,9 @@
   letter-spacing: 2px;
 }
 
+
 /* ============================= */
-/*      COMBINATION DISPLAY     */
+/*      COMBINATION DISPLAY      */
 /* ============================= */
 
 .training-command {
@@ -192,7 +194,6 @@
 }
 
 @keyframes premiumCommand {
-
   0% {
     opacity: 0;
     transform:
@@ -224,86 +225,92 @@
       translateY(0);
     filter: blur(0);
   }
-
 }
 
+
 /* ============================= */
-/*           MOBILE             */
+/*          ROUND INTRO          */
 /* ============================= */
 
-@media (max-width: 600px) {
-
-  .app {
-    padding: 40px 15px;
-  }
-
-  .app h1 {
-    font-size: 38px;
-  }
-
-  .app > p {
-    font-size: 16px;
-    margin-bottom: 35px;
-  }
-
-  .app button {
-    padding: 13px 20px;
-    font-size: 15px;
-  }
-
-  .start-container {
-    margin-top: 60px;
-  }
-
-  .training-command {
-    font-size: 34px;
-    padding: 20px;
-  }
-
-  .round-number {
-    font-size: 18px;
-  }
-
-}
 .round-intro {
-  position: relative;
-  z-index: 2;
+  position: fixed;
+  inset: 0;
 
-  font-size: clamp(48px, 8vw, 90px);
-  font-weight: 900;
-  letter-spacing: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  z-index: 2;
 
   animation: roundIntroAnimation 0.8s ease;
 }
 
-@keyframes roundIntroAnimation {
+.round-intro-label {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #777;
+}
 
+.round-intro-number {
+  margin-top: 15px;
+
+  font-size: clamp(100px, 18vw, 180px);
+  font-weight: 900;
+  line-height: 1;
+
+  animation: roundIntroNumberAnimation 0.8s ease;
+}
+
+@keyframes roundIntroAnimation {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes roundIntroNumberAnimation {
   0% {
     opacity: 0;
     transform: scale(0.7);
-    filter: blur(10px);
   }
 
   60% {
     opacity: 1;
     transform: scale(1.08);
-    filter: blur(0);
   }
 
   100% {
     opacity: 1;
     transform: scale(1);
   }
-
 }
+
+
+/* ============================= */
+/*            REST               */
+/* ============================= */
+
 .rest-screen {
-  position: relative;
+  position: fixed;
+  inset: 0;
+
   z-index: 2;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  text-align: center;
 
   animation: restScreenAnimation 0.8s ease;
 }
@@ -316,25 +323,20 @@
 
 .rest-timer {
   margin-top: 15px;
-
   font-size: 42px;
   font-weight: 700;
-
   color: #888;
 }
 
 .rest-message {
   margin-top: 20px;
-
   font-size: 16px;
   letter-spacing: 2px;
-
   color: #666;
   text-transform: uppercase;
 }
 
 @keyframes restScreenAnimation {
-
   0% {
     opacity: 0;
     transform: scale(0.8);
@@ -346,9 +348,12 @@
     transform: scale(1);
     filter: blur(0);
   }
-
 }
-/* CUSTOM ROUNDS */
+
+
+/* ============================= */
+/*        CUSTOM ROUNDS          */
+/* ============================= */
 
 .custom-rounds {
   margin-top: 15px;
@@ -387,6 +392,7 @@
   box-shadow:
     0 0 20px rgba(255, 255, 255, 0.08);
 }
+
 /* Remove number input spinner arrows */
 
 .custom-rounds input::-webkit-outer-spin-button,
@@ -398,16 +404,24 @@
 .custom-rounds input {
   appearance: textfield;
 }
-/* COUNTDOWN */
+
+
+/* ============================= */
+/*          COUNTDOWN            */
+/* ============================= */
 
 .countdown-screen {
-  position: relative;
+  position: fixed;
+  inset: 0;
+
   z-index: 2;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  text-align: center;
 
   animation: countdownScreenAnimation 0.8s ease;
 }
@@ -430,7 +444,6 @@
 }
 
 @keyframes countdownScreenAnimation {
-
   0% {
     opacity: 0;
     filter: blur(10px);
@@ -440,11 +453,9 @@
     opacity: 1;
     filter: blur(0);
   }
-
 }
 
 @keyframes countdownNumberAnimation {
-
   0% {
     opacity: 0;
     transform: scale(0.5);
@@ -459,23 +470,29 @@
     opacity: 1;
     transform: scale(1);
   }
-
 }
 
 
-/* COMPLETION SCREEN */
+/* ============================= */
+/*       COMPLETION SCREEN       */
+/* ============================= */
 
 .complete-screen {
-  position: relative;
+  position: fixed;
+  inset: 0;
+
   z-index: 2;
 
-  width: min(600px, 90%);
+  width: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 
   text-align: center;
+
+  padding: 40px 20px;
 
   animation: completeScreenAnimation 1s ease;
 }
@@ -493,13 +510,12 @@
 
 .complete-subtitle {
   margin-top: 15px;
-
   font-size: 18px;
   color: #777;
 }
 
 .session-summary {
-  width: 100%;
+  width: min(600px, 90%);
 
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -569,7 +585,6 @@
 }
 
 @keyframes completeScreenAnimation {
-
   0% {
     opacity: 0;
     transform: scale(0.9);
@@ -581,13 +596,59 @@
     transform: scale(1);
     filter: blur(0);
   }
-
 }
 
 
-/* MOBILE COMPLETION SCREEN */
+/* ============================= */
+/*            MOBILE             */
+/* ============================= */
 
 @media (max-width: 600px) {
+
+  .app {
+    padding: 40px 15px;
+  }
+
+  .app h1 {
+    font-size: 38px;
+  }
+
+  .app > p {
+    font-size: 16px;
+    margin-bottom: 35px;
+  }
+
+  .app button {
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+
+  .start-container {
+    margin-top: 60px;
+  }
+
+  .training-command {
+    font-size: 34px;
+    padding: 20px;
+  }
+
+  .round-intro-label {
+    font-size: 24px;
+    letter-spacing: 4px;
+  }
+
+  .round-intro-number {
+    font-size: 110px;
+  }
+
+  .countdown-label {
+    font-size: 18px;
+    letter-spacing: 4px;
+  }
+
+  .countdown-number {
+    font-size: 110px;
+  }
 
   .session-summary {
     grid-template-columns: 1fr;
@@ -600,68 +661,4 @@
   .complete-subtitle {
     font-size: 16px;
   }
-
-}
-/* COUNTDOWN */
-
-.countdown-screen {
-  position: relative;
-  z-index: 2;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  animation: countdownScreenAnimation 0.8s ease;
-}
-
-.countdown-label {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 6px;
-  color: #777;
-}
-
-.countdown-number {
-  margin-top: 20px;
-
-  font-size: clamp(100px, 18vw, 180px);
-  font-weight: 900;
-  line-height: 1;
-
-  animation: countdownNumberAnimation 0.9s ease;
-}
-
-@keyframes countdownScreenAnimation {
-
-  0% {
-    opacity: 0;
-    filter: blur(10px);
-  }
-
-  100% {
-    opacity: 1;
-    filter: blur(0);
-  }
-
-}
-
-@keyframes countdownNumberAnimation {
-
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  60% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
 }
