@@ -126,16 +126,12 @@ const trainingCombinations = {
 };
 
 
-/* ROUND DURATIONS */
-
 const roundDurations = {
   Beginner: 10,
   Intermediate: 15,
   Advanced: 20
 };
 
-
-/* COMBINATION INTERVALS */
 
 const combinationIntervals = {
   Beginner: 5000,
@@ -144,20 +140,114 @@ const combinationIntervals = {
 };
 
 
-/* REST */
-
 const restDuration = 30;
-
-
-/* COUNTDOWN */
 
 const countdownDuration = 3;
 
-
-/* ROUND INTRO */
-
 const roundIntroDuration = 3;
 
+
+/*
+  SOUND ENGINE
+*/
+
+function playSound(type) {
+
+  const AudioContext =
+    window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContext) {
+    return;
+  }
+
+  const audioContext = new AudioContext();
+
+  const oscillator =
+    audioContext.createOscillator();
+
+  const gainNode =
+    audioContext.createGain();
+
+
+  oscillator.connect(gainNode);
+
+  gainNode.connect(audioContext.destination);
+
+
+  let frequency = 600;
+  let duration = 0.12;
+
+
+  if (type === "countdown") {
+    frequency = 600;
+    duration = 0.12;
+  }
+
+
+  if (type === "start") {
+    frequency = 900;
+    duration = 0.25;
+  }
+
+
+  if (type === "combination") {
+    frequency = 500;
+    duration = 0.08;
+  }
+
+
+  if (type === "rest") {
+    frequency = 400;
+    duration = 0.35;
+  }
+
+
+  if (type === "complete") {
+    frequency = 800;
+    duration = 0.5;
+  }
+
+
+  oscillator.frequency.value = frequency;
+
+  oscillator.type = "sine";
+
+
+  gainNode.gain.setValueAtTime(
+    0.0001,
+    audioContext.currentTime
+  );
+
+
+  gainNode.gain.exponentialRampToValueAtTime(
+    0.15,
+    audioContext.currentTime + 0.01
+  );
+
+
+  gainNode.gain.exponentialRampToValueAtTime(
+    0.0001,
+    audioContext.currentTime + duration
+  );
+
+
+  oscillator.start();
+
+  oscillator.stop(
+    audioContext.currentTime + duration
+  );
+
+
+  oscillator.onended = () => {
+    audioContext.close();
+  };
+
+}
+
+
+/*
+  TRAINING SCREEN
+*/
 
 function TrainingScreen({
   difficulty,
@@ -173,17 +263,22 @@ function TrainingScreen({
 
   const [round, setRound] = useState(1);
 
-  const [phase, setPhase] = useState("countdown");
+  const [phase, setPhase] =
+    useState("countdown");
+
 
   const [timeLeft, setTimeLeft] =
     useState(countdownDuration);
 
 
-  const [combination, setCombination] = useState(
-    combinations[
-      Math.floor(Math.random() * combinations.length)
-    ]
-  );
+  const [combination, setCombination] =
+    useState(
+      combinations[
+        Math.floor(
+          Math.random() * combinations.length
+        )
+      ]
+    );
 
 
   const [combinationId, setCombinationId] =
@@ -203,6 +298,8 @@ function TrainingScreen({
 
     if (timeLeft <= 0) {
 
+      playSound("start");
+
       setPhase("roundIntro");
 
       setTimeLeft(roundIntroDuration);
@@ -212,10 +309,14 @@ function TrainingScreen({
     }
 
 
+    playSound("countdown");
+
+
     const timer = setTimeout(() => {
 
       setTimeLeft(
-        (previousTime) => previousTime - 1
+        (previousTime) =>
+          previousTime - 1
       );
 
     }, 1000);
@@ -227,7 +328,7 @@ function TrainingScreen({
 
 
   /*
-    ROUND INTRO TIMER
+    ROUND INTRO
   */
 
   useEffect(() => {
@@ -244,6 +345,8 @@ function TrainingScreen({
       setTimeLeft(
         roundDurations[difficulty]
       );
+
+      playSound("start");
 
     }, roundIntroDuration * 1000);
 
@@ -279,6 +382,8 @@ function TrainingScreen({
 
           if (round === rounds) {
 
+            playSound("complete");
+
             setPhase("complete");
 
             return 0;
@@ -289,6 +394,8 @@ function TrainingScreen({
           /*
             MORE ROUNDS
           */
+
+          playSound("rest");
 
           setPhase("rest");
 
@@ -306,7 +413,12 @@ function TrainingScreen({
 
     return () => clearInterval(timer);
 
-  }, [phase, difficulty, round, rounds]);
+  }, [
+    phase,
+    difficulty,
+    round,
+    rounds
+  ]);
 
 
   /*
@@ -324,7 +436,9 @@ function TrainingScreen({
 
       const newCombination =
         combinations[
-          Math.floor(Math.random() * combinations.length)
+          Math.floor(
+            Math.random() * combinations.length
+          )
         ];
 
 
@@ -332,15 +446,23 @@ function TrainingScreen({
 
 
       setCombinationId(
-        (previousId) => previousId + 1
+        (previousId) =>
+          previousId + 1
       );
+
+
+      playSound("combination");
 
     }, combinationIntervals[difficulty]);
 
 
     return () => clearInterval(timer);
 
-  }, [phase, difficulty, mode]);
+  }, [
+    phase,
+    difficulty,
+    mode
+  ]);
 
 
   /*
@@ -357,12 +479,16 @@ function TrainingScreen({
     if (timeLeft <= 0) {
 
       setRound(
-        (previousRound) => previousRound + 1
+        (previousRound) =>
+          previousRound + 1
       );
+
 
       setPhase("roundIntro");
 
-      setTimeLeft(roundIntroDuration);
+      setTimeLeft(
+        roundIntroDuration
+      );
 
       return;
 
@@ -372,15 +498,20 @@ function TrainingScreen({
     const timer = setTimeout(() => {
 
       setTimeLeft(
-        (previousTime) => previousTime - 1
+        (previousTime) =>
+          previousTime - 1
       );
 
     }, 1000);
 
 
-    return () => clearTimeout(timer);
+    return () =>
+      clearTimeout(timer);
 
-  }, [phase, timeLeft]);
+  }, [
+    phase,
+    timeLeft
+  ]);
 
 
   /*
@@ -459,7 +590,7 @@ function TrainingScreen({
 
 
   /*
-    MAIN TRAINING SCREEN
+    MAIN SCREEN
   */
 
   return (
