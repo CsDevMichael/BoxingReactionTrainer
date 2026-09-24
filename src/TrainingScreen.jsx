@@ -351,7 +351,7 @@ useEffect(() => {
         key={combinationId}
         className="training-command"
       >
-        {formatCommand(combination)}
+        {formatCommand(combination, stance)}
       </div>
 
     </div>

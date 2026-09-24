@@ -1,20 +1,3 @@
-const punchCommands = [
-  "Jab",
-  "Cross",
-  "Lead Hook",
-  "Rear Hook",
-  "Lead Uppercut",
-  "Rear Uppercut"
-];
-
-const defenseCommands = [
-  "Slip Left",
-  "Slip Right",
-  "Roll",
-  "Pull Back",
-  "Parry"
-];
-
 const offenceCombinations = {
   Beginner: [
     ["Jab", "Cross"],
@@ -44,6 +27,7 @@ const offenceCombinations = {
   ]
 };
 
+
 const defenseCombinations = {
   Beginner: [
     ["Slip Left"],
@@ -70,6 +54,7 @@ const defenseCombinations = {
     ["Slip Left", "Cross", "Roll", "Lead Hook"]
   ]
 };
+
 
 const mixedCombinations = {
   Beginner: [
@@ -98,6 +83,7 @@ const mixedCombinations = {
   ]
 };
 
+
 function getRandomCombination(combinations) {
   const randomIndex = Math.floor(
     Math.random() * combinations.length
@@ -105,6 +91,7 @@ function getRandomCombination(combinations) {
 
   return combinations[randomIndex];
 }
+
 
 function getCommandPool(difficulty, mode) {
   if (mode === "Offence") {
@@ -118,12 +105,53 @@ function getCommandPool(difficulty, mode) {
   return mixedCombinations[difficulty];
 }
 
+
 export function generateCommand(difficulty, mode) {
   const pool = getCommandPool(difficulty, mode);
 
   return getRandomCombination(pool);
 }
 
-export function formatCommand(command) {
-  return command.join(" → ");
+
+function getHandName(hand, stance) {
+  if (hand === "Lead") {
+    return stance === "Southpaw" ? "Right" : "Left";
+  }
+
+  if (hand === "Rear") {
+    return stance === "Southpaw" ? "Left" : "Right";
+  }
+
+  return hand;
+}
+
+
+function translateCommand(command, stance) {
+
+  if (command === "Lead Hook") {
+    return `${getHandName("Lead", stance)} Hook`;
+  }
+
+  if (command === "Rear Hook") {
+    return `${getHandName("Rear", stance)} Hook`;
+  }
+
+  if (command === "Lead Uppercut") {
+    return `${getHandName("Lead", stance)} Uppercut`;
+  }
+
+  if (command === "Rear Uppercut") {
+    return `${getHandName("Rear", stance)} Uppercut`;
+  }
+
+  return command;
+}
+
+
+export function formatCommand(command, stance) {
+  return command
+    .map(singleCommand =>
+      translateCommand(singleCommand, stance)
+    )
+    .join(" → ");
 }
