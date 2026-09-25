@@ -5,58 +5,64 @@ import {
 } from "./commandEngine";
 import { playSound } from "./audioEngine";
 
+const roundDurations = {
+  Beginner: 30,
+  Intermediate: 45,
+  Advanced: 60
+};
+
+const combinationTiming = {
+  Beginner: {
+    min: 4000,
+    max: 6000
+  },
+
+  Intermediate: {
+    min: 3000,
+    max: 5000
+  },
+
+  Advanced: {
+    min: 2000,
+    max: 4000
+  }
+};
+
+const restDuration = 30;
+const countdownDuration = 3;
+const roundIntroDuration = 3;
+
 function TrainingScreen({
   difficulty,
   mode,
   stance,
   rounds,
-  onBackToSetup
+  onBackToSetup,
+  onTrainingComplete
 }) {
-  const roundDurations = {
-    Beginner: 30,
-    Intermediate: 45,
-    Advanced: 60
-  };
-
-  const combinationTiming = {
-    Beginner: {
-      min: 4000,
-      max: 6000
-    },
-    Intermediate: {
-      min: 3000,
-      max: 5000
-    },
-    Advanced: {
-      min: 2000,
-      max: 4000
-    }
-  };
-
-  const restDuration = 30;
-  const countdownDuration = 3;
-  const roundIntroDuration = 3;
-
-  const totalTrainingTime =
-    roundDurations[difficulty] * rounds +
-    restDuration * (rounds - 1);
-
   const [round, setRound] = useState(1);
 
   const [phase, setPhase] = useState("countdown");
 
-  const [timeLeft, setTimeLeft] = useState(
-    countdownDuration
-  );
+  const [timeLeft, setTimeLeft] =
+    useState(countdownDuration);
 
-  const [combination, setCombination] = useState(
-    generateCommand(difficulty, mode)
-  );
+  const [combination, setCombination] =
+    useState(
+      generateCommand(
+        difficulty,
+        mode
+      )
+    );
 
-  const [combinationId, setCombinationId] = useState(0);
+  const [combinationId, setCombinationId] =
+    useState(0);
+
 
   /*
-    COUNTDOWN
+  ============================
+  COUNTDOWN
+  ============================
   */
 
   useEffect(() => {
@@ -82,10 +88,17 @@ function TrainingScreen({
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [phase, timeLeft]);
+
+  }, [
+    phase,
+    timeLeft
+  ]);
+
 
   /*
-    ROUND INTRO
+  ============================
+  ROUND INTRO
+  ============================
   */
 
   useEffect(() => {
@@ -103,7 +116,10 @@ function TrainingScreen({
       );
 
       setCombination(
-        generateCommand(difficulty, mode)
+        generateCommand(
+          difficulty,
+          mode
+        )
       );
 
       setCombinationId(
@@ -120,6 +136,7 @@ function TrainingScreen({
     }, 1000);
 
     return () => clearTimeout(timer);
+
   }, [
     phase,
     timeLeft,
@@ -127,8 +144,11 @@ function TrainingScreen({
     mode
   ]);
 
+
   /*
-    TRAINING TIMER
+  ============================
+  TRAINING TIMER
+  ============================
   */
 
   useEffect(() => {
@@ -141,28 +161,33 @@ function TrainingScreen({
     }
 
     const timer = setTimeout(() => {
-      setTimeLeft(previousTime => {
-        if (previousTime <= 1) {
-          if (round >= rounds) {
-            playSound("complete");
 
-            setPhase("complete");
+      if (timeLeft <= 1) {
 
-            return 0;
-          }
+        if (round >= rounds) {
+          playSound("complete");
 
-          playSound("rest");
+          setPhase("complete");
 
-          setPhase("rest");
-
-          return restDuration;
+          return;
         }
 
-        return previousTime - 1;
-      });
+        playSound("rest");
+
+        setPhase("rest");
+        setTimeLeft(restDuration);
+
+        return;
+      }
+
+      setTimeLeft(
+        previousTime => previousTime - 1
+      );
+
     }, 1000);
 
     return () => clearTimeout(timer);
+
   }, [
     phase,
     timeLeft,
@@ -170,8 +195,31 @@ function TrainingScreen({
     rounds
   ]);
 
+
   /*
-    NEW BOXING COMMAND
+  ============================
+  UPDATE STATISTICS
+  ============================
+  */
+
+  useEffect(() => {
+    if (phase !== "complete") {
+      return;
+    }
+
+    if (onTrainingComplete) {
+      onTrainingComplete();
+    }
+
+  }, [
+    phase,
+  ]);
+
+
+  /*
+  ============================
+  NEW BOXING COMMAND
+  ============================
   */
 
   useEffect(() => {
@@ -185,10 +233,15 @@ function TrainingScreen({
     const delay =
       Math.floor(
         Math.random() *
-          (timing.max - timing.min + 1)
+        (
+          timing.max -
+          timing.min +
+          1
+        )
       ) + timing.min;
 
     const timer = setTimeout(() => {
+
       const newCommand =
         generateCommand(
           difficulty,
@@ -202,6 +255,7 @@ function TrainingScreen({
       );
 
       playSound("combination");
+
     }, delay);
 
     return () => clearTimeout(timer);
@@ -213,8 +267,11 @@ function TrainingScreen({
     combinationId
   ]);
 
+
   /*
-    REST
+  ============================
+  REST
+  ============================
   */
 
   useEffect(() => {
@@ -223,13 +280,17 @@ function TrainingScreen({
     }
 
     if (timeLeft <= 0) {
+
       setRound(
-        previousRound => previousRound + 1
+        previousRound =>
+          previousRound + 1
       );
 
       setPhase("roundIntro");
 
-      setTimeLeft(roundIntroDuration);
+      setTimeLeft(
+        roundIntroDuration
+      );
 
       return;
     }
@@ -241,39 +302,46 @@ function TrainingScreen({
     }, 1000);
 
     return () => clearTimeout(timer);
+
   }, [
     phase,
     timeLeft
   ]);
 
+
   /*
-    COUNTDOWN SCREEN
+  ============================
+  COUNTDOWN SCREEN
+  ============================
   */
 
   if (phase === "countdown") {
     return (
       <div className="countdown-screen">
+
         <div className="countdown-label">
           GET READY
         </div>
 
-        <div
-          key={timeLeft}
-          className="countdown-number"
-        >
+        <div className="countdown-number">
           {timeLeft}
         </div>
+
       </div>
     );
   }
 
+
   /*
-    ROUND INTRO SCREEN
+  ============================
+  ROUND INTRO SCREEN
+  ============================
   */
 
   if (phase === "roundIntro") {
     return (
       <div className="round-intro">
+
         <div className="round-intro-label">
           ROUND
         </div>
@@ -281,17 +349,22 @@ function TrainingScreen({
         <div className="round-intro-number">
           {round}
         </div>
+
       </div>
     );
   }
 
+
   /*
-    REST SCREEN
+  ============================
+  REST SCREEN
+  ============================
   */
 
   if (phase === "rest") {
     return (
       <div className="rest-screen">
+
         <div className="rest-title">
           REST
         </div>
@@ -301,17 +374,63 @@ function TrainingScreen({
         </div>
 
         <div className="rest-message">
-          Recover. Get ready for the next round.
+          Recover. Next round coming.
         </div>
+
       </div>
     );
   }
 
+
   /*
-    RESULTS SCREEN
+  ============================
+  TRAINING SCREEN
+  ============================
+  */
+
+  if (phase === "training") {
+    return (
+      <div className="training-screen">
+
+        <div className="round-info">
+
+          <div className="round-number">
+            ROUND {round} / {rounds}
+          </div>
+
+          <div className="timer">
+            {timeLeft}
+          </div>
+
+        </div>
+
+        <div
+          key={combinationId}
+          className="training-command"
+        >
+          {formatCommand(
+            combination,
+            stance
+          )}
+        </div>
+
+      </div>
+    );
+  }
+
+
+  /*
+  ============================
+  TRAINING COMPLETE
+  ============================
   */
 
   if (phase === "complete") {
+
+    const totalTrainingTime =
+      roundDurations[difficulty] * rounds +
+      restDuration * (rounds - 1);
+
     return (
       <div className="complete-screen">
 
@@ -326,6 +445,7 @@ function TrainingScreen({
         <div className="results-grid">
 
           <div className="result-card">
+
             <div className="result-label">
               DIFFICULTY
             </div>
@@ -333,9 +453,12 @@ function TrainingScreen({
             <div className="result-value">
               {difficulty}
             </div>
+
           </div>
 
+
           <div className="result-card">
+
             <div className="result-label">
               MODE
             </div>
@@ -343,9 +466,12 @@ function TrainingScreen({
             <div className="result-value">
               {mode}
             </div>
+
           </div>
 
+
           <div className="result-card">
+
             <div className="result-label">
               STANCE
             </div>
@@ -353,9 +479,12 @@ function TrainingScreen({
             <div className="result-value">
               {stance}
             </div>
+
           </div>
 
+
           <div className="result-card">
+
             <div className="result-label">
               ROUNDS COMPLETED
             </div>
@@ -363,22 +492,32 @@ function TrainingScreen({
             <div className="result-value">
               {rounds} / {rounds}
             </div>
+
           </div>
 
+
           <div className="result-card">
+
             <div className="result-label">
               TRAINING TIME
             </div>
 
             <div className="result-value">
-              {Math.floor(totalTrainingTime / 60)}:
+
+              {Math.floor(
+                totalTrainingTime / 60
+              )}:
+
               {String(
                 totalTrainingTime % 60
               ).padStart(2, "0")}
+
             </div>
+
           </div>
 
         </div>
+
 
         <button
           className="start-button"
@@ -391,37 +530,8 @@ function TrainingScreen({
     );
   }
 
-  /*
-    TRAINING SCREEN
-  */
 
-  return (
-    <div className="training-screen">
-
-      <div className="round-info">
-
-        <div className="round-number">
-          ROUND {round} / {rounds}
-        </div>
-
-        <div className="timer">
-          {timeLeft}
-        </div>
-
-      </div>
-
-      <div
-        key={combinationId}
-        className="training-command"
-      >
-        {formatCommand(
-          combination,
-          stance
-        )}
-      </div>
-
-    </div>
-  );
+  return null;
 }
 
 export default TrainingScreen;
